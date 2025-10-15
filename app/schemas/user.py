@@ -1,12 +1,12 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class UserBase(BaseModel):
     username: str
     email: str
-    reservations: list
 
 class UserCreate(UserBase):
-    pass
+    password: str  # Plain password from client
 
 class UserRead(UserBase):
     id: int
