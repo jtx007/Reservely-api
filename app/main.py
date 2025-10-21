@@ -6,12 +6,12 @@ import os
 from sqlmodel import Session, SQLModel, create_engine
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load environment variables
 load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from routers import user  # Your custom router
+from routers import user, restaurant  # Your custom routers
 
 # Database setup
 db_url = os.getenv("DATABASE_URL")
@@ -46,5 +46,14 @@ async def lifespan(app: FastAPI):
 # FastAPI app instance
 app = FastAPI(lifespan=lifespan)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],   # Allows all methods
+    allow_headers=["*"],   # Allows all headers
+)
+
 # Include routers
 app.include_router(user.router)
+app.include_router(restaurant.router)
