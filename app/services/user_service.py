@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from schemas.user import UserCreate, UserUpdate
 from models.user import User
+from typing import Optional
+from core.auth import verify_password
+
 from passlib.context import CryptContext
 import hashlib
 import base64
@@ -48,3 +51,18 @@ def create_user(user_create: UserCreate, db: Session):
    db.commit()
    db.refresh(user)
    return user
+
+# Add these functions to your existing user_service.py
+
+def get_user_by_username(username: str, db: Session) -> Optional[User]:
+    """Get user by username"""
+    return db.query(User).filter(User.username == username).first()  # type: ignore
+
+def authenticate_user(username: str, password: str, db: Session) -> Optional[User]:
+    """Authenticate user with username and password"""
+    user = get_user_by_username(username, db)
+    if not user:
+        return None
+    if not verify_password(password, user.password):
+        return None
+    return user
