@@ -33,7 +33,7 @@ def destroy_user(user_id: int, db:Session):
     user = db.get(User, user_id)
     db.delete(user)
     db.commit()
-    return f"{user} destroyed from db"
+    return {"message": "user destroyed"}
 
 def get_password_hash(password: str) -> str:
     sha256_digest = hashlib.sha256(password.encode('utf-8')).digest()
