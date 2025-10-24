@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Query
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from db.dependency import get_db
 from services import restaurant_service
@@ -19,11 +20,13 @@ def get_restaurant_by_id(restaurant_id: int, db: Session = Depends(get_db)):
 @router.put("/restaurants/{restaurant_id}", response_model=RestaurantRead)
 def update_restaurant_by_id(restaurant_id: int, restaurant_update: RestaurantUpdate, db: Session = Depends(get_db)):
     return restaurant_service.update_restaurant(restaurant_id=restaurant_id, restaurant_update=restaurant_update, db=db)
-
-@router.delete("/restaurants/{restaurant_id}", response_model=RestaurantRead)
+class MessageResponse(BaseModel):
+    message: str
+@router.delete("/restaurants/{restaurant_id}", response_model=MessageResponse)
 def delete_restaurant_by_id(restaurant_id: int, db: Session = Depends(get_db)):
     return restaurant_service.destroy_restaurant(restaurant_id=restaurant_id, db=db)
-    
+
+
 
 @router.post("/restaurants", response_model=RestaurantRead)
 def create_restaurant(restaurant_create: RestaurantCreate, db: Session = Depends(get_db)):

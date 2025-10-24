@@ -28,7 +28,7 @@ def destroy_restaurant(restaurant_id: int, db: Session):
   restaurant = db.get(Restaurant, restaurant_id)
   db.delete(restaurant)
   db.commit()
-  return f"{restaurant} deleted" 
+  return {"message": "restaurant destroyed"} 
   
 
 def create_restaurant(restaurant_create: RestaurantCreate, db: Session):
