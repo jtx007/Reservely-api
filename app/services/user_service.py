@@ -1,9 +1,9 @@
 
 from sqlalchemy.orm import Session
-from schemas.user import UserCreate, UserUpdate
-from models.user import User
+from app.schemas.user import UserCreate, UserUpdate
+from app.models.user import User
 from typing import Optional
-from core.auth import verify_password
+from app.core.auth import verify_password
 from passlib.context import CryptContext
 import hashlib
 import base64

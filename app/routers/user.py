@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from models.user import User
-from app.dependencies import get_current_active_user
-from db.dependency import get_db
-from services import user_service
-from schemas.user import UserRead, UserCreate, UserUpdate, UserLogin, Token
-from core.auth import create_access_token, get_current_user
+from app.models.user import User
+from app.db.dependency import get_db
+from app.services import user_service
+from app.schemas.user import UserRead, UserCreate, UserUpdate, UserLogin, Token
+from app.core.auth import create_access_token, get_current_user
 
 router = APIRouter(tags=["User"])
 
