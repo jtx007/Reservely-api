@@ -1,13 +1,15 @@
+
 from sqlalchemy.orm import Session
 from schemas.user import UserCreate, UserUpdate
 from models.user import User
 from typing import Optional
 from core.auth import verify_password
-
 from passlib.context import CryptContext
 import hashlib
 import base64
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
 
 def get_all_users(db: Session):
     return db.query(User).all()
@@ -40,18 +42,20 @@ def get_password_hash(password: str) -> str:
     b64_encoded = base64.b64encode(sha256_digest).decode('utf-8')
     return pwd_context.hash(b64_encoded)
     
+
 def create_user(user_create: UserCreate, db: Session):
-   hashed_pw = get_password_hash(user_create.password)
-   user = User(
+    hashed_pw = get_password_hash(user_create.password)
+    user = User(
         username=user_create.username,
         email=user_create.email,
         password=hashed_pw
     )
-   db.add(user)
-   db.commit()
-   db.refresh(user)
-   return user
-
+    
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    
+    return user
 # Add these functions to your existing user_service.py
 
 def get_user_by_username(username: str, db: Session) -> Optional[User]:
