@@ -1,4 +1,3 @@
-from ast import Name
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
