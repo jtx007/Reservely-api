@@ -1,11 +1,13 @@
 from typing import Annotated
-from urllib.parse import urlparse
 import sys
 from dotenv import load_dotenv
 import os
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, SQLModel, create_engine
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request, HTTPException, status
+from fastapi.responses import JSONResponse
+import re
 from fastapi.middleware.cors import CORSMiddleware
 # Load environment variables
 load_dotenv()
@@ -45,6 +47,42 @@ async def lifespan(app: FastAPI):
 
 # FastAPI app instance
 app = FastAPI(lifespan=lifespan)
+
+
+def sanitize_integrity_error(e: IntegrityError) -> str:
+    msg = str(e.orig)
+    
+    # Grab everything after DETAIL:
+    detail_part = msg.split("DETAIL:")[1].strip() if "DETAIL:" in msg else msg
+
+    # Extract the field inside parentheses
+    match = re.search(r'Key \((.*?)\)', detail_part)
+    if match:
+        field = match.group(1).capitalize()  # capitalize first letter
+        # Remove the "Key (field)=" part, leaving only the DB message
+        cleaned_msg = re.sub(r'Key \(' + re.escape(match.group(1)) + r'\)=\([^\)]*\)\s*', '', detail_part)
+        return f"{field} {cleaned_msg}"
+    
+    # fallback
+    return detail_part
+@app.exception_handler(IntegrityError)
+async def integrity_error_handler(request: Request, exc: IntegrityError):
+    user_friendly_msg = sanitize_integrity_error(exc)
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": user_friendly_msg}
+    )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "detail": exc.detail,
+            "path": request.url.path
+        }
+    )
+
 
 app.add_middleware(
     CORSMiddleware,
