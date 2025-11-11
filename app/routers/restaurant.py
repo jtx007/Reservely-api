@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from db.dependency import get_db
-from services import restaurant_service
-from schemas.restaurant import RestaurantRead, RestaurantCreate, RestaurantUpdate
+from app.db.dependency import get_db
+from app.services import restaurant_service
+from app.schemas.restaurant import RestaurantRead, RestaurantCreate, RestaurantUpdate
 
 router = APIRouter(tags=["Restaurant"])
 
