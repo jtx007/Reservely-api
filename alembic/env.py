@@ -9,14 +9,13 @@ from alembic import context
 
 # Add project root so we can import app modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from app.core.config import Settings  # type: ignore[call-arg] # DATABASE_URL loaded from env/.env file by BaseSettings
+from app.core.config import settings
 from app.db.base import Base  # import your metadata
 
 # Alembic Config object
 config = context.config
 
 # Override sqlalchemy.url with strongly-typed settings
-settings = Settings()  # type: ignore[call-arg] # DATABASE_URL loaded from env/.env file by BaseSettings
 config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
 
 # Configure logging
