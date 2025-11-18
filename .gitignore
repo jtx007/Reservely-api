@@ -101,3 +101,4 @@ celerybeat.pid
 dmypy.json
 
 .venv/bin
+.vercel
