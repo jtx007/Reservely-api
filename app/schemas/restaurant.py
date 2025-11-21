@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Optional
 
+from backend.app.models.room import Room
+
 class RestaurantBase(BaseModel):
     name: str
     description: str
@@ -19,6 +21,6 @@ class RestaurantRead(RestaurantBase):
     id: int
     open: int
     close: int
-
+    rooms: list["Room"] = []
     class Config:
         from_attributes = True
